@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello Server Sent Events</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+<h1>Hello Server Sent Events</h1>
+<h2>Latest received events:</h2>
+<ol id="events"></ol>
+<h2>Latest pings</h2>
+<ul id="pings"></ul>
+</body>
+
+<script>
+    const eventSource = new EventSource('/events');
+    const eventsList = document.getElementById('events');
+    const pingsList = document.getElementById('pings');
+    eventSource.onopen = (event) => {
+        console.log('Connection opened');
+    };
+    eventSource.onerror = (event) => {
+        console.error('Error occurred:', event);
+    };
+    eventSource.addEventListener('ping', ({data}) => {
+        const newElement = document.createElement('li');
+        newElement.textContent = 'ping: ' + data;
+        pingsList.prepend(newElement);
+    });
+    eventSource.onmessage = ({data}) => {
+        const newElement = document.createElement('li');
+        newElement.textContent = 'message: ' + data;
+        eventsList.prepend(newElement);
+    };
+</script>
+</html>
